@@ -2,10 +2,10 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org/">
 <head th:replace="fragments :: head"></head>
 
-<body class="container  body-content">
+<body class="container body-content">
 <h1 th:text="${'Employer: ' + employer.name}">Default Title</h1>
 
-<nav th:replace="fragments :: page-header"></nav>
+<div th:replace="fragments :: page-header"></div>
 
 <div class="job-listing">
     <p th:text="${'Name: ' + employer.name}"></p>

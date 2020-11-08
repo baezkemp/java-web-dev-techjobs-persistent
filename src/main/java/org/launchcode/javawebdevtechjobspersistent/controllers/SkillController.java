@@ -14,8 +14,16 @@ import java.util.Optional;
 @Controller
 @RequestMapping("skills")
 public class SkillController {
+
     @Autowired
     private SkillRepository skillRepository;
+
+    @GetMapping
+    public String displaySkills(Model model) {
+        model.addAttribute("title", "All Skills");
+        model.addAttribute("skills", skillRepository.findAll());
+        return "skills/index";
+    }
 
     @GetMapping("add")
     public String displayAddSkillForm(Model model) {
@@ -26,7 +34,6 @@ public class SkillController {
     @PostMapping("add")
     public String processAddSkillForm(@ModelAttribute @Valid Skill newSkill,
                                          Errors errors, Model model) {
-
         if (errors.hasErrors()) {
             model.addAttribute("title", "Add Skill");
             return "skills/add";
@@ -35,17 +42,21 @@ public class SkillController {
         return "skills/view";
     }
 
-    @GetMapping("view/{skillId}")
-    public String displayViewSkill(Model model, @PathVariable int skillId) {
-
-        Optional optSkill = null;
-        if (optSkill.isPresent()) {
-            Optional<Skill> skills = skillRepository.findById(skillId);
-            model.addAttribute("skill", skills);
-            return "skills/view";
+    @GetMapping(path = {"view/{skillId}", "view"})
+    public String displayViewSkill(Model model, @PathVariable (required = false) Integer skillId) {
+        if (skillId == null) {
+            model.addAttribute("skills", skillRepository.findAll());
+            return "skills/index";
         } else {
-            return "redirect:../";
+            Optional<Skill> result = skillRepository.findById(skillId);
+            if (result.isEmpty()) {
+                return "redirect:../";
+            } else {
+                Skill skill = result.get();
+                model.addAttribute("skill", skill);
+            }
         }
+        return "skills/view";
     }
 
 }
